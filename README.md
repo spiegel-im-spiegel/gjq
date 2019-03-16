@@ -34,6 +34,19 @@ Flags:
   -v, --version       output version of gjq
 ```
 
+### Syntax
+
+See [savaki/jq].
+
+| syntax   | meaning                                         |
+| -------- | ----------------------------------------------- |
+| .        | unchanged input                                 |
+| .foo     | value at key                                    |
+| .foo.bar | value at nested key                             |
+| .[0]     | value at specified element of array             |
+| .[0:1]   | array of specified elements of array, inclusive |
+| .foo.[0] | nested value                                    |
+
 ### Filtering JSON data from Stdin
 
 ```
