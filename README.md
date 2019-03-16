@@ -1,5 +1,9 @@
 # [gjq] - Another Implementation of [jq] by golang
 
+[![Build Status](https://travis-ci.org/spiegel-im-spiegel/gjq.svg?branch=master)](https://travis-ci.org/spiegel-im-spiegel/gjq)
+[![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/spiegel-im-spiegel/gjq/master/LICENSE)
+[![GitHub release](http://img.shields.io/github/release/spiegel-im-spiegel/gjq.svg)](https://github.com/spiegel-im-spiegel/gjq/releases/latest)
+
 - Use [savaki/jq] package
 
 ## Declare [gjq] module
@@ -10,7 +14,7 @@ See [go.mod](https://github.com/spiegel-im-spiegel/gjq/blob/master/go.mod) file.
 
 ### Binaries
 
-See [latest release](https://github.com/spiegel-im-spiegel/gpgpdump/releases/latest).
+See [latest release](https://github.com/spiegel-im-spiegel/gjq/releases/latest).
 
 ### Usage
 
