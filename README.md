@@ -21,7 +21,7 @@ See [latest release](https://github.com/spiegel-im-spiegel/gjq/releases/latest).
 ```
 $ gjq -h
 Usage:
-  gjq [flags] <query string>
+  gjq [flags] <filter string>
 
 Flags:
       --debug         for debug
@@ -34,7 +34,7 @@ Flags:
   -v, --version       output version of gjq
 ```
 
-### Syntax
+### Syntax of Filter
 
 See [savaki/jq].
 

@@ -30,7 +30,7 @@ var (
 //newRootCmd returns cobra.Command instance for root command
 func newRootCmd(ui *rwi.RWI, args []string) *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use: Name + " [flags] <query string>",
+		Use: Name + " [flags] <filter string>",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			//parse options
 			if versionFlag {
