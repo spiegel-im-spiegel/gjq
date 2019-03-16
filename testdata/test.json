@@ -1,0 +1,14 @@
+{
+  "string": "a",
+  "number": 1.23,
+  "simple": ["a", "b", "c"],
+  "mixed": [
+    "a",
+    1,
+    {"hello":"world"}
+  ],
+  "object": {
+    "first": "joe",
+    "array": [1,2,3]
+  }
+}
