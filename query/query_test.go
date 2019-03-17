@@ -22,25 +22,14 @@ var imputStr = `{
 
 func TestQuery(t *testing.T) {
 	testCases := []struct {
-		indent int
-		tab    bool
 		filter string
 		res    string
 	}{
-		{indent: -1, tab: false, filter: ".object.array", res: "[1,2,3]"},
-		{indent: 0, tab: false, filter: ".object.array", res: "[1,2,3]"},
-		{indent: 0, tab: true, filter: ".object.array", res: "[\n\t1,\n\t2,\n\t3\n]"},
-		{indent: 1, tab: true, filter: ".object.array", res: "[\n\t1,\n\t2,\n\t3\n]"},
-		{indent: 1, tab: false, filter: ".object.array", res: "[\n 1,\n 2,\n 3\n]"},
+		{filter: ".object.array", res: "[1,2,3]"},
 	}
 
 	for _, tc := range testCases {
-		op := New(
-			[]byte(imputStr),
-			WithIndent(tc.indent),
-			WithTab(tc.tab),
-		)
-		res, err := op.Query(tc.filter)
+		res, err := New([]byte(imputStr)).Query(tc.filter)
 		if err != nil {
 			t.Errorf("Op.Query(\"%v\")  = %+v, want nil.", tc.filter, err)
 			continue
@@ -51,12 +40,7 @@ func TestQuery(t *testing.T) {
 }
 
 func TestParseError(t *testing.T) {
-	op := New(
-		[]byte(imputStr),
-		WithIndent(0),
-		WithTab(false),
-	)
-	res, err := op.Query(".[0]")
+	res, err := New([]byte(imputStr)).Query(".[0]")
 	if err == nil {
 		t.Error("Op.Query(\"string\")  = nil, want not nil.")
 		fmt.Printf("Info: %v\n", string(res))
@@ -66,8 +50,7 @@ func TestParseError(t *testing.T) {
 }
 
 func TestQueryNil(t *testing.T) {
-	op := (*Op)(nil)
-	_, err := op.Query(".")
+	_, err := (*Op)(nil).Query(".")
 	if err == nil {
 		t.Error("Op.Query(\".\")  = nil, want not nil.")
 	} else {

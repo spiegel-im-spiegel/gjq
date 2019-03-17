@@ -9,6 +9,9 @@
   ],
   "object": {
     "first": "joe",
-    "array": [1,2,3]
+    "flag1": true,
+    "flag2": false,
+    "array": [1,2,3],
+	"nil": null
   }
 }

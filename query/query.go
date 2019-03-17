@@ -1,49 +1,18 @@
 package query
 
 import (
-	"bytes"
-	"encoding/json"
-	"strings"
-
 	"github.com/savaki/jq"
 	"github.com/spiegel-im-spiegel/gjq/errs"
 )
 
 //Op is class for JSON query
 type Op struct {
-	data   []byte
-	indent int
-	tab    bool
+	data []byte
 }
-
-//OptFunc is self-referential function for functional options pattern
-type OptFunc func(*Op)
 
 //New returns new Op instance
-func New(j []byte, opts ...OptFunc) *Op {
-	o := &Op{data: j, indent: 2, tab: false}
-	for _, opt := range opts {
-		opt(o)
-	}
-	return o
-}
-
-//WithIndent returns function for setting Reader
-func WithIndent(i int) OptFunc {
-	return func(o *Op) {
-		if i < 0 {
-			o.indent = 0
-		} else {
-			o.indent = i
-		}
-	}
-}
-
-//WithTab returns function for setting Reader
-func WithTab(t bool) OptFunc {
-	return func(o *Op) {
-		o.tab = t
-	}
+func New(j []byte) *Op {
+	return &Op{data: j}
 }
 
 //Query returns result of query
@@ -56,30 +25,7 @@ func (o *Op) Query(filter string) ([]byte, error) {
 		return nil, errs.Wrapf(err, "cannot parse JSON data (filter is \"%v\")", filter)
 	}
 	res, err := op.Apply(o.data)
-	if err != nil {
-		return nil, errs.Wrapf(err, "cannot parse JSON data (filter is \"%v\")", filter)
-	}
-
-	//format
-	if o.tab {
-		return formatJSON(res, "\t")
-	}
-	if o.indent > 0 {
-		return formatJSON(res, strings.Repeat(" ", o.indent))
-	}
-	return compactJSON(res)
-}
-
-func formatJSON(j []byte, indent string) ([]byte, error) {
-	buf := &bytes.Buffer{}
-	err := json.Indent(buf, j, "", indent)
-	return buf.Bytes(), errs.Wrap(err, "format error in JSON string")
-}
-
-func compactJSON(j []byte) ([]byte, error) {
-	buf := &bytes.Buffer{}
-	err := json.Compact(buf, j)
-	return buf.Bytes(), errs.Wrap(err, "format error in JSON string")
+	return res, errs.Wrapf(err, "cannot parse JSON data (filter is \"%v\")", filter)
 }
 
 /* Copyright 2019 Spiegel

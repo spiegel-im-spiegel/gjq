@@ -12,4 +12,5 @@
 *.out
 
 # Other files and directories
+work/
 go.sum

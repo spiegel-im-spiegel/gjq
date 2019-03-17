@@ -35,7 +35,7 @@ func TestLoadByStdin(t *testing.T) {
 		rwi.WithWriter(outBuf),
 		rwi.WithErrorWriter(outErrBuf),
 	)
-	args := []string{"-i", "0", "--debug", ".object.array"}
+	args := []string{"-i", "0", "-C", "--debug", ".object.array"}
 
 	exit := Execute(ui, args)
 	if exit != exitcode.Normal {
@@ -60,7 +60,7 @@ func TestLoadByStdinError(t *testing.T) {
 		rwi.WithWriter(outBuf),
 		rwi.WithErrorWriter(outErrBuf),
 	)
-	args := []string{"-i", "0", "--debug", ".[0]"}
+	args := []string{"-i", "0", "-C", "--debug", ".[0]"}
 
 	exit := Execute(ui, args)
 	if exit != exitcode.Abnormal {
@@ -80,7 +80,7 @@ func TestLoadByFile(t *testing.T) {
 		rwi.WithWriter(outBuf),
 		rwi.WithErrorWriter(outErrBuf),
 	)
-	args := []string{"-i", "0", "--debug", "-f", "../testdata/test.json", ".object.array"}
+	args := []string{"-i", "0", "-C", "--debug", "-f", "../testdata/test.json", ".object.array"}
 
 	exit := Execute(ui, args)
 	if exit != exitcode.Normal {
@@ -105,7 +105,7 @@ func TestLoadByFileError(t *testing.T) {
 		rwi.WithWriter(outBuf),
 		rwi.WithErrorWriter(outErrBuf),
 	)
-	args := []string{"-i", "0", "--debug", "-f", "noexist.txt", ".object.array"}
+	args := []string{"-i", "0", "-C", "--debug", "-f", "noexist.txt", ".object.array"}
 
 	exit := Execute(ui, args)
 	if exit != exitcode.Abnormal {
@@ -125,7 +125,7 @@ func TestLoadByURL(t *testing.T) {
 		rwi.WithWriter(outBuf),
 		rwi.WithErrorWriter(outErrBuf),
 	)
-	args := []string{"-i", "0", "--debug", "-u", "https://text.baldanders.info/index.json", ".title"}
+	args := []string{"-i", "0", "-C", "--debug", "-u", "https://text.baldanders.info/index.json", ".title"}
 
 	exit := Execute(ui, args)
 	if exit != exitcode.Normal {
@@ -151,7 +151,7 @@ func TestLoadByURLError(t *testing.T) {
 		rwi.WithWriter(outBuf),
 		rwi.WithErrorWriter(outErrBuf),
 	)
-	args := []string{"-i", "0", "--debug", "-u", "http://foo.bar/json.json", ".object.array"}
+	args := []string{"-i", "0", "-C", "--debug", "-u", "http://foo.bar/json.json", ".object.array"}
 
 	exit := Execute(ui, args)
 	if exit != exitcode.Abnormal {

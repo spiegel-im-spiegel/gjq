@@ -2,11 +2,16 @@ package facade
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 
+	"github.com/mattn/go-colorable"
+	"github.com/mattn/go-isatty"
 	"github.com/spf13/cobra"
 	"github.com/spiegel-im-spiegel/gjq/errs"
+	"github.com/spiegel-im-spiegel/gjq/fmtr"
+	"github.com/spiegel-im-spiegel/gjq/interactive"
 	"github.com/spiegel-im-spiegel/gjq/query"
 	"github.com/spiegel-im-spiegel/gocli/exitcode"
 	"github.com/spiegel-im-spiegel/gocli/rwi"
@@ -42,16 +47,38 @@ func newRootCmd(ui *rwi.RWI, args []string) *cobra.Command {
 			if err != nil {
 				return errs.Wrap(err, "error in --interactive option")
 			}
+			clip, err := cmd.Flags().GetBool("clipboard")
+			if err != nil {
+				return errs.Wrap(err, "error in --clipboard option")
+			}
 
-			//indent size
-			i, err := cmd.Flags().GetInt("indent")
+			//clorize
+			color, err := cmd.Flags().GetBool("color")
+			if err != nil {
+				return errs.Wrap(err, "error in --color option")
+			}
+			if color {
+				if isTerminal(ui) {
+					ui = rwi.New(
+						rwi.WithReader(ui.Reader()),
+						rwi.WithWriter(colorable.NewColorableStdout()),
+						rwi.WithErrorWriter(ui.ErrorWriter()),
+					)
+				} else {
+					color = false
+				}
+			}
+
+			//format JSON
+			indent, err := cmd.Flags().GetInt("indent")
 			if err != nil {
 				return errs.Wrap(err, "error in --indent option")
 			}
-			t, err := cmd.Flags().GetBool("tab")
+			tab, err := cmd.Flags().GetBool("tab")
 			if err != nil {
 				return errs.Wrap(err, "error in --tab option")
 			}
+			formatter := fmtr.New(indent, tab, color)
 
 			//get JSON data
 			var data []byte
@@ -63,7 +90,6 @@ func newRootCmd(ui *rwi.RWI, args []string) *cobra.Command {
 			if err != nil {
 				return errs.Wrap(err, "error in --url option")
 			}
-
 			if len(file) > 0 {
 				data, err = getJSONFile(file)
 			} else if len(url) > 0 {
@@ -77,17 +103,10 @@ func newRootCmd(ui *rwi.RWI, args []string) *cobra.Command {
 				}
 				return err
 			}
-			op := query.New(
-				data,
-				query.WithIndent(i),
-				query.WithTab(t),
-			)
+			op := query.New(data)
 
 			if iFlag {
-				if err := interactiveMode(ui, op); err != nil {
-					return err
-				}
-				return nil
+				return interactive.Run(op, formatter, clip)
 			}
 
 			filter := "."
@@ -101,13 +120,23 @@ func newRootCmd(ui *rwi.RWI, args []string) *cobra.Command {
 				}
 				return err
 			}
+
+			res, err = formatter.Format(res)
+			if err != nil {
+				if debugFlag {
+					_ = ui.OutputErrln(fmt.Sprintf("%+v", err))
+				}
+				return err
+			}
 			return ui.Outputln(string(res))
 		},
 	}
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "output version of "+Name)
 	rootCmd.Flags().BoolVarP(&debugFlag, "debug", "", false, "for debug")
 	rootCmd.Flags().BoolP("tab", "t", false, "use tabs for indentation")
+	rootCmd.Flags().BoolP("color", "C", false, "colorize JSON")
 	rootCmd.Flags().BoolP("interactive", "I", false, "interactive mode")
+	rootCmd.Flags().BoolP("clipboard", "c", false, "copy to clipboard in interactive mode")
 	rootCmd.Flags().IntP("indent", "i", 2, "indent size for formatted JSON string")
 	rootCmd.Flags().StringP("file", "f", "", "JSON data (file path)")
 	rootCmd.Flags().StringP("url", "u", "", "JSON data (URL)")
@@ -116,6 +145,15 @@ func newRootCmd(ui *rwi.RWI, args []string) *cobra.Command {
 	rootCmd.SetOutput(ui.ErrorWriter())
 
 	return rootCmd
+}
+
+func isTerminal(ui *rwi.RWI) bool {
+	if file, ok := ui.Writer().(*os.File); !ok {
+		return false
+	} else if !isatty.IsTerminal(file.Fd()) && !isatty.IsCygwinTerminal(file.Fd()) {
+		return false
+	}
+	return true
 }
 
 //Execute is called from main function
