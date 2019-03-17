@@ -4,8 +4,6 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/spiegel-im-spiegel/gjq/master/LICENSE)
 [![GitHub release](http://img.shields.io/github/release/spiegel-im-spiegel/gjq.svg)](https://github.com/spiegel-im-spiegel/gjq/releases/latest)
 
-- Use [savaki/jq] package
-
 ## Declare [gjq] module
 
 See [go.mod](https://github.com/spiegel-im-spiegel/gjq/blob/master/go.mod) file. 
@@ -24,6 +22,8 @@ Usage:
   gjq [flags] <filter string>
 
 Flags:
+  -c, --clipboard     copy to clipboard in interactive mode
+  -C, --color         colorize JSON
       --debug         for debug
   -f, --file string   JSON data (file path)
   -h, --help          help for gjq
